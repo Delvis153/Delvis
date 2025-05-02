@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "381914534102",
+    "project_id": "delvis153",
+    "storage_bucket": "delvis153.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:381914534102:android:d52252b8512ba0db8a7977",
+        "android_client_info": {
+          "package_name": "com.example.delvis"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7RwstyS0cbRyHzBEihC63MXx_CwpxbX4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
