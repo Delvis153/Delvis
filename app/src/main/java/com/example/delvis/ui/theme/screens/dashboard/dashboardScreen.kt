@@ -15,8 +15,12 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
@@ -47,9 +51,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.delvis.R
+import com.example.delvis.navigation.ROUTE_ADD_APPLICATION
 import com.example.delvis.navigation.ROUTE_ADD_JOB
 import com.example.delvis.navigation.ROUTE_ADD_PRODUCT
+import com.example.delvis.navigation.ROUTE_APPLICATION_BOARD
+import com.example.delvis.navigation.ROUTE_DASHBOARD
 import com.example.delvis.navigation.ROUTE_LOGIN
+import com.example.delvis.navigation.ROUTE_SEARCH_JOB
+import com.example.delvis.navigation.ROUTE_VIEW_JOBS
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,18 +66,70 @@ fun DashboardScreen(navController: NavController) {
     val selectedItem = remember { mutableStateOf(0) }
     val context = LocalContext.current
     Scaffold(
+//        bottomBar = {
+//            NavigationBar(containerColor = Color.Black) {
+//                NavigationBarItem(
+//                    selected = selectedItem.value == 0,
+//                    onClick = {
+//                        selectedItem.value = 0
+//                        val intent = Intent(Intent.ACTION_DIAL).apply {
+//                            data = Uri.parse("tel:0722949328")
+//                        }
+//                        context.startActivity(intent)
+//                    },
+//                    icon = { Icon(Icons.Filled.Phone, contentDescription = "Phone") },
+//                    label = { Text("Phone") },
+//                    alwaysShowLabel = true
+//                )
+//                NavigationBarItem(
+//                    selected = selectedItem.value == 1,
+//                    onClick = {
+//                        selectedItem.value = 1
+//                        val intent = Intent(Intent.ACTION_SENDTO).apply {
+//                            data = Uri.parse("mailto:thevissbeautybar@gmail.com")
+//                            putExtra(Intent.EXTRA_SUBJECT, "Make an Order")
+//                            putExtra(Intent.EXTRA_TEXT, "Give Me The Transaction Process Breakdown")
+//                        }
+//                        context.startActivity(intent)
+//                    },
+//                    icon = { Icon(Icons.Filled.Email, contentDescription = "Email") },
+//                    label = { Text("Email") },
+//                    alwaysShowLabel = true
+//                )
+//                NavigationBarItem(
+//                    selected = selectedItem.value == 2,
+//                    onClick = {
+//                        selectedItem.value = 2
+//                        val sendintent = Intent().apply {
+//                            action = Intent.ACTION_SEND
+//                            putExtra(
+//                                Intent.EXTRA_TEXT,
+//                                "Download app here: https://www.download.com"
+//                            )
+//                            type = "text/plain"
+//                        }
+//                        val shareIntent = Intent.createChooser(sendintent, null)
+//                        context.startActivity(shareIntent)
+//                    },
+//                    icon = { Icon(Icons.Filled.Share, contentDescription = "Share") },
+//                    label = { Text("Share") },
+//                    alwaysShowLabel = true
+//                )
+//            }
+//        }
         bottomBar = {
             NavigationBar(containerColor = Color.Black){
                 NavigationBarItem(
                     selected = selectedItem.value == 0,
                     onClick = {
                         selectedItem.value = 0
-                        val intent = Intent(Intent.ACTION_DIAL).apply{
-                            data= Uri.parse("tel:0722949328")}
-                        context.startActivity(intent)
+                        navController.navigate(ROUTE_DASHBOARD)
+//                        val intent = Intent(Intent.ACTION_DIAL).apply{
+//                            data= Uri.parse("tel:0722949328")}
+//                        context.startActivity(intent)
                     },
-                    icon = { Icon(Icons.Filled.Phone, contentDescription = "Phone") },
-                    label = { Text("Phone") },
+                    icon = { Icon(Icons.Filled.Home, contentDescription = "Home") },
+                    label = { Text("Dashboard") },
                     alwaysShowLabel = true
                 )
                 NavigationBarItem(
@@ -77,13 +138,11 @@ fun DashboardScreen(navController: NavController) {
                         selectedItem.value = 1
                         val intent = Intent(Intent.ACTION_SENDTO).apply{
                             data= Uri.parse("mailto:thevissbeautybar@gmail.com")
-                            putExtra(Intent.EXTRA_SUBJECT, "Make an Order")
-                            putExtra(Intent.EXTRA_TEXT, "Give Me The Transaction Process Breakdown")
                         }
                         context.startActivity(intent)
                     },
-                    icon = { Icon(Icons.Filled.Email, contentDescription = "Email") },
-                    label = { Text("Email") },
+                    icon = { Icon(Icons.Filled.DateRange, contentDescription = "Email") },
+                    label = { Text("Resumes") },
                     alwaysShowLabel = true
                 )
                 NavigationBarItem(
@@ -98,10 +157,31 @@ fun DashboardScreen(navController: NavController) {
                         val shareIntent = Intent.createChooser(sendintent, null)
                         context.startActivity(shareIntent)
                     },
-                    icon = { Icon(Icons.Filled.Share, contentDescription = "Share") },
-                    label = { Text("Share") },
+                    icon = { Icon(Icons.Filled.MailOutline, contentDescription = "Share") },
+                    label = { Text("Letters") },
                     alwaysShowLabel = true
                 )
+                NavigationBarItem(
+                    selected = selectedItem.value == 3,
+                    onClick = {
+                        selectedItem.value = 3
+                        navController.navigate(ROUTE_SEARCH_JOB)
+                    },
+                    icon = { Icon(Icons.Filled.Build, contentDescription = "Jobs") },
+                    label = { Text("Jobs") },
+                    alwaysShowLabel = true
+                )
+                NavigationBarItem(
+                    selected = selectedItem.value == 4,
+                    onClick = {
+                        selectedItem.value = 4
+                        navController.navigate(ROUTE_APPLICATION_BOARD)
+                    },
+                    icon = { Icon(Icons.Filled.Create, contentDescription = "Applications") },
+                    label = { Text("Applications") },
+                    alwaysShowLabel = true
+                )
+
             }
         }
     ) {
@@ -121,23 +201,23 @@ fun DashboardScreen(navController: NavController) {
         ) {
             TopAppBar(
                 title = {
-                    Text(text = "Jobsearcher")
+                    Text(text = "JobSeeker")
                 },
-                navigationIcon = {
-                    IconButton(onClick = {}) {
-                        Icon(
-                            imageVector = Icons.Filled.Home,
-                            contentDescription = "Home"
-                        )
-                    }
-                },
+//                navigationIcon = {
+//                    IconButton(onClick = {}) {
+//                        Icon(
+//                            imageVector = Icons.Filled.Home,
+//                            contentDescription = "Home"
+//                        )
+//                    }
+//                },
                 actions = {
-                    IconButton(onClick = {}) {
-                        Icon(
-                            imageVector = Icons.Filled.Person,
-                            contentDescription = "Profile"
-                        )
-                    }
+//                    IconButton(onClick = {}) {
+//                        Icon(
+//                            imageVector = Icons.Filled.Person,
+//                            contentDescription = "Profile"
+//                        )
+//                    }
                     IconButton(onClick = {}) {
                         Icon(
                             Icons.Filled.Search,
@@ -155,7 +235,7 @@ fun DashboardScreen(navController: NavController) {
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Magenta,
-                    titleContentColor = Color.White,
+                    titleContentColor = Color.Black,
                     navigationIconContentColor = Color.Black
                 )
 
@@ -164,7 +244,7 @@ fun DashboardScreen(navController: NavController) {
                 Card(
                     modifier = Modifier
                         .padding(10.dp)
-                        .clickable {navController.navigate(ROUTE_ADD_PRODUCT)},
+                        .clickable {navController.navigate(ROUTE_ADD_APPLICATION)},
                     shape = RoundedCornerShape(20.dp),
                     elevation = CardDefaults.cardElevation(10.dp),
                     colors = CardDefaults.cardColors(Color.Cyan)

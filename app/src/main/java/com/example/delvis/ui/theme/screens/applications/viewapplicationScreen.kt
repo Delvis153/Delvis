@@ -39,44 +39,50 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.delvis.data.ProductViewModel
 import com.example.delvis.models.ProductModel
-import com.example.delvis.navigation.ROUTE_UPDATE_PRODUCT
+import com.example.delvis.navigation.ROUTE_UPDATE_APPLICATION
 
 
 @Composable
-fun ViewProducts(navController: NavHostController){
+fun ViewApplications(navController: NavHostController) {
     val context = LocalContext.current
-    val productRepository = ProductViewModel()
+    val applicationRepository = ProductViewModel()
     val emptyUploadState = remember {
         mutableStateOf(
-            ProductModel("","","","","",""))
+            ProductModel("", "", "", "", "", "")
+        )
     }
     val emptyUploadListState = remember {
         mutableStateListOf<ProductModel>()
     }
-    val products = productRepository.viewProducts(
-        emptyUploadState,emptyUploadListState, context)
-    Column (modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally){
+    val applications = applicationRepository.viewProducts(
+        emptyUploadState, emptyUploadListState, context
+    )
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "All Products",
+            Text(
+                text = "All Applications",
                 fontSize = 30.sp,
                 fontFamily = FontFamily.SansSerif,
-                color= Color.Black)
+                color = Color.Black
+            )
             Spacer(modifier = Modifier.height(20.dp))
-            LazyColumn(){
-                items(products){
-                    ProductItem(
-                        productname = it.productname,
-                        productquantity = it.productquantity,
-                        productprice = it.productprice,
+            LazyColumn {
+                items(applications) {
+                    ApplicationItem(
+                        applicationName = it.productname,
+                        applicationQuantity = it.productquantity,
+                        applicationPrice = it.productprice,
                         desc = it.desc,
-                        productId = it.productId,
+                        applicationId = it.productId,
                         imageUrl = it.imageUrl,
                         navController = navController,
-                        productRepository = productRepository
+                        applicationRepository = applicationRepository
                     )
                 }
             }
@@ -84,19 +90,25 @@ fun ViewProducts(navController: NavHostController){
     }
 }
 @Composable
-fun ProductItem(productname:String,productquantity:String,productprice:String,
-                desc: String,productId:String,imageUrl: String,navController: NavHostController,
-                productRepository: ProductViewModel
-){
+fun ApplicationItem(
+    applicationName: String,
+    applicationQuantity: String,
+    applicationPrice: String,
+    desc: String,
+    applicationId: String,
+    imageUrl: String,
+    navController: NavHostController,
+    applicationRepository: ProductViewModel
+) {
     val context = LocalContext.current
-    Column (modifier = Modifier.fillMaxWidth()){
-        Card (modifier = Modifier
-            .padding(10.dp)
-            .height(210.dp),
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Card(
+            modifier = Modifier
+                .padding(10.dp)
+                .height(210.dp),
             shape = MaterialTheme.shapes.medium,
-            colors = CardDefaults.cardColors
-                (containerColor = Color.Gray))
-        {
+            colors = CardDefaults.cardColors(containerColor = Color.Gray)
+        ) {
             Row {
                 Column {
                     AsyncImage(
@@ -109,65 +121,89 @@ fun ProductItem(productname:String,productquantity:String,productprice:String,
                             .padding(10.dp)
                     )
                     Row(horizontalArrangement = Arrangement.SpaceBetween) {
-                        Button(onClick = {
-                            productRepository.deleteProduct(context,productId,navController)
-                        },
+                        Button(
+                            onClick = {
+                                applicationRepository.deleteProduct(context, applicationId, navController)
+                            },
                             shape = RoundedCornerShape(10.dp),
                             colors = ButtonDefaults.buttonColors(Color.Red)
                         ) {
-                            Text(text = "REMOVE",
+                            Text(
+                                text = "REMOVE",
                                 color = Color.Black,
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp)
+                                fontSize = 16.sp
+                            )
                         }
-                        Button(onClick = {
-                            navController.navigate("$ROUTE_UPDATE_PRODUCT/$productId")
-                        },
+                        Button(
+                            onClick = {
+                                navController.navigate("$ROUTE_UPDATE_APPLICATION/$applicationId")
+                            },
                             shape = RoundedCornerShape(10.dp),
                             colors = ButtonDefaults.buttonColors(Color.Green)
                         ) {
-                            Text(text = "UPDATE",
+                            Text(
+                                text = "UPDATE",
                                 color = Color.Black,
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp)
+                                fontSize = 16.sp
+                            )
                         }
                     }
                 }
-                Column (modifier = Modifier
-                    .padding(vertical = 10.dp, horizontal = 10.dp)
-                    .verticalScroll(rememberScrollState())){
-                    Text(text = "PRODUCT NAME",
+                Column(
+                    modifier = Modifier
+                        .padding(vertical = 10.dp, horizontal = 10.dp)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    Text(
+                        text = "APPLICATION NAME",
                         color = Color.Black,
                         fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold)
-                    Text(text = productname,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = applicationName,
                         color = Color.White,
                         fontSize = 28.sp,
-                        fontWeight = FontWeight.Bold)
-                    Text(text = "PRODUCT QUANTITY",
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "APPLICATION QUANTITY",
                         color = Color.Black,
                         fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold)
-                    Text(text = productquantity,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = applicationQuantity,
                         color = Color.White,
                         fontSize = 28.sp,
-                        fontWeight = FontWeight.Bold)
-                    Text(text = "PRODUCT PRICE",
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "APPLICATION PRICE",
                         color = Color.Black,
                         fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold)
-                    Text(text = productprice,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = applicationPrice,
                         color = Color.White,
                         fontSize = 28.sp,
-                        fontWeight = FontWeight.Bold)
-                    Text(text = "DESC",
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "DESCRIPTION",
                         color = Color.Black,
                         fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold)
-                    Text(text = desc,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = desc,
                         color = Color.White,
                         fontSize = 28.sp,
-                        fontWeight = FontWeight.Bold)
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
         }
@@ -175,6 +211,6 @@ fun ProductItem(productname:String,productquantity:String,productprice:String,
 }
 @Preview
 @Composable
-fun ViewProductsPreview(){
-    ViewProducts(rememberNavController())
+fun ViewApplicationsPreview() {
+    ViewApplications(rememberNavController())
 }

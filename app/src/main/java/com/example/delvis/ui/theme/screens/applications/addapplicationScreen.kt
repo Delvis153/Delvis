@@ -46,22 +46,25 @@ import com.example.delvis.data.ProductViewModel
 import com.example.delvis.navigation.ROUTE_DASHBOARD
 
 @Composable
-fun AddproductScreen(navController: NavController){
+fun AddApplicationScreen(navController: NavController){
     val imageUri = rememberSaveable() { mutableStateOf<Uri?>(null) }
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent())
-    { uri:Uri? -> uri?.let{imageUri.value=it} }
-    var productname by remember { mutableStateOf("")}
-    var productquantity by remember { mutableStateOf("") }
-    var productprice by remember { mutableStateOf("") }
-    var productbrand by remember { mutableStateOf("") }
+    { uri: Uri? -> uri?.let { imageUri.value = it } }
+    var applicationName by remember { mutableStateOf("") }
+    var applicationQuantity by remember { mutableStateOf("") }
+    var applicationPrice by remember { mutableStateOf("") }
+    var applicationBrand by remember { mutableStateOf("") }
     var desc by remember { mutableStateOf("") }
-    val productViewModel: ProductViewModel = viewModel()
+    val applicationViewModel: ProductViewModel = viewModel() // Rename ViewModel separately if needed
     val context = LocalContext.current
+
     Column(
         modifier = Modifier.fillMaxSize().padding(20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally) {
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
 
-        Text(text = "ADD NEW APPLICATION",
+        Text(
+            text = "ADD NEW APPLICATION",
             fontSize = 20.sp,
             color = Color.White,
             fontFamily = FontFamily.SansSerif,
@@ -73,75 +76,95 @@ fun AddproductScreen(navController: NavController){
                 .fillMaxWidth()
         )
 
-        Card (shape = CircleShape,
+        Card(
+            shape = CircleShape,
             modifier = Modifier.padding(10.dp).size(200.dp)
-        ){
-
+        ) {
             AsyncImage(
-                model = imageUri.value ?:R.drawable.ic_person,
+                model = imageUri.value ?: R.drawable.ic_person,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.size(200.dp)
-                    .clickable{launcher.launch("image/*")}
+                    .clickable { launcher.launch("image/*") }
             )
         }
-        Text(text = "Attach your product's photo")
+
+        Text(text = "Attach your application's photo")
+
         OutlinedTextField(
-            value = productname,
-            onValueChange = {newProductname -> productname = newProductname},
-            label = {Text(text = "Product Name") },
-            placeholder = {Text(text = "Please enter your product's name")},
+            value = applicationName,
+            onValueChange = { newName -> applicationName = newName },
+            label = { Text(text = "Application Name") },
+            placeholder = { Text(text = "Please enter your application's name") },
             modifier = Modifier.fillMaxWidth()
         )
 
         OutlinedTextField(
-            value = productquantity,
-            onValueChange = {newProductquantity -> productquantity = newProductquantity},
-            label = {Text(text = "Product Quantity") },
-            placeholder = {Text(text = "Please enter your product's name")},
+            value = applicationQuantity,
+            onValueChange = { newQuantity -> applicationQuantity = newQuantity },
+            label = { Text(text = "Application Quantity") },
+            placeholder = { Text(text = "Please enter the application's quantity") },
             modifier = Modifier.fillMaxWidth()
         )
+
         OutlinedTextField(
-            value = productprice,
-            onValueChange = {newProductprice -> productprice = newProductprice},
-            label = {Text(text = "Product Price") },
-            placeholder = {Text(text = "Please enter your product's price")},
+            value = applicationPrice,
+            onValueChange = { newPrice -> applicationPrice = newPrice },
+            label = { Text(text = "Application Price") },
+            placeholder = { Text(text = "Please enter the application's price") },
             modifier = Modifier.fillMaxWidth()
         )
+
         OutlinedTextField(
-            value = productbrand,
-            onValueChange ={newProductbrand -> productbrand = newProductbrand},
-            label = {Text(text = "Product Brand")},
-            placeholder = {Text(text = "Please enter product's brand")},
+            value = applicationBrand,
+            onValueChange = { newBrand -> applicationBrand = newBrand },
+            label = { Text(text = "Application Brand") },
+            placeholder = { Text(text = "Please enter the application's brand") },
             modifier = Modifier.fillMaxWidth()
         )
+
         OutlinedTextField(
             value = desc,
-            onValueChange ={newDesc -> desc = newDesc},
-            label = {Text(text = "Brief description")},
-            placeholder = {Text(text = "Please enter product's descriptions")},
+            onValueChange = { newDesc -> desc = newDesc },
+            label = { Text(text = "Brief description") },
+            placeholder = { Text(text = "Please enter application's description") },
             modifier = Modifier.fillMaxWidth().height(150.dp),
             singleLine = false
         )
-        Row(modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween) {
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
             Button(onClick = {
                 navController.navigate(ROUTE_DASHBOARD)
-            }) { Text(text = "Home") }
-            Button(onClick = {
-                imageUri.value?.let {
-                    productViewModel.uploadProductWithImage(it, context, productname, productquantity, productprice, desc, navController)
-                } ?: Toast.makeText(context, "Please select an image", Toast.LENGTH_SHORT).show()
-            }, colors = ButtonDefaults.buttonColors(Color.Cyan)){ Text(text = "Save") }
+            }) {
+                Text(text = "Home")
+            }
+            Button(
+                onClick = {
+                    imageUri.value?.let {
+                        applicationViewModel.uploadProductWithImage(
+                            it,
+                            context,
+                            applicationName,
+                            applicationQuantity,
+                            applicationPrice,
+                            desc,
+                            navController
+                        )
+                    } ?: Toast.makeText(context, "Please select an image", Toast.LENGTH_SHORT).show()
+                },
+                colors = ButtonDefaults.buttonColors(Color.Cyan)
+            ) {
+                Text(text = "Save")
+            }
         }
-
     }
-
 }
 
-
-@Preview(showBackground = true, showSystemUi =true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun AddproductScreenPreview() {
-    AddproductScreen(rememberNavController())
+fun AddApplicationScreenPreview() {
+    AddApplicationScreen(rememberNavController())
 }

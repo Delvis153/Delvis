@@ -40,80 +40,108 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 @Composable
-fun UpdateproductScreen(navController: NavController,productId: String){
+fun UpdateApplicationScreen(navController: NavController, applicationId: String) {
     val context = LocalContext.current
     val imageUri = rememberSaveable() { mutableStateOf<Uri?>(null) }
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent())
-    {uri: Uri? -> uri?.let{imageUri.value=it} }
-    var productname by remember { mutableStateOf("") }
-    var productquantity by remember { mutableStateOf("") }
-    var productprice by remember { mutableStateOf("") }
+    { uri: Uri? -> uri?.let { imageUri.value = it } }
+
+    var applicationName by remember { mutableStateOf("") }
+    var applicationQuantity by remember { mutableStateOf("") }
+    var applicationPrice by remember { mutableStateOf("") }
     var desc by remember { mutableStateOf("") }
-    val currentDataRef  = FirebaseDatabase.getInstance()
-        .getReference().child("Products/$productId")
-    DisposableEffect(Unit){
-        val listener = object  : ValueEventListener {
+
+    val currentDataRef = FirebaseDatabase.getInstance()
+        .getReference().child("Applications/$applicationId")
+
+    DisposableEffect(Unit) {
+        val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val product = snapshot.getValue(ProductModel::class.java)
-                product?.let {
-                    productname = it.productname
-                    productquantity = it.productquantity
-                    productprice = it.productprice
+                val application = snapshot.getValue(ProductModel::class.java)
+                application?.let {
+                    applicationName = it.productname
+                    applicationQuantity = it.productquantity
+                    applicationPrice = it.productprice
                     desc = it.desc
                 }
             }
+
             override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(context,error.message,Toast.LENGTH_LONG).show()
+                Toast.makeText(context, error.message, Toast.LENGTH_LONG).show()
             }
         }
+
         currentDataRef.addValueEventListener(listener)
         onDispose { currentDataRef.removeEventListener(listener) }
     }
-    Column(modifier = Modifier.fillMaxSize().padding(10.dp),
-        horizontalAlignment = Alignment.CenterHorizontally) {
-        Card (shape = CircleShape,
-            modifier = Modifier.padding(10.dp).size(200.dp)){
-            AsyncImage(model = imageUri.value ?:R.drawable.ic_person,
+
+    Column(
+        modifier = Modifier.fillMaxSize().padding(10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Card(
+            shape = CircleShape,
+            modifier = Modifier.padding(10.dp).size(200.dp)
+        ) {
+            AsyncImage(
+                model = imageUri.value ?: R.drawable.ic_person,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.size(200.dp)
-                    .clickable { launcher.launch("image/*") })
+                    .clickable { launcher.launch("image/*") }
+            )
         }
-        Text(text = "Attach product image")
-        OutlinedTextField(value = productname,
-            onValueChange = {newProductname ->productname=newProductname},
-            label = { Text(text = "Product Name") },
-            placeholder = { Text(text = "Please enter product name") },
-            modifier = Modifier.fillMaxWidth())
-        OutlinedTextField(value = productquantity,
-            onValueChange = {newProductquantity ->productquantity=newProductquantity},
-            label = { Text(text = "Product Quantity") },
-            placeholder = { Text(text = "Please enter product quantity") },
-            modifier = Modifier.fillMaxWidth())
-        OutlinedTextField(value = productprice,
-            onValueChange = {newProductprice ->productprice=newProductprice},
-            label = { Text(text = "Unit Product Price") },
-            placeholder = { Text(text = "Please enter unit product price") },
-            modifier = Modifier.fillMaxWidth())
-        OutlinedTextField(value = desc,
-            onValueChange ={newDesc->desc=newDesc},
+
+        Text(text = "Attach application image")
+
+        OutlinedTextField(
+            value = applicationName,
+            onValueChange = { newName -> applicationName = newName },
+            label = { Text(text = "Application Name") },
+            placeholder = { Text(text = "Please enter application name") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        OutlinedTextField(
+            value = applicationQuantity,
+            onValueChange = { newQty -> applicationQuantity = newQty },
+            label = { Text(text = "Application Quantity") },
+            placeholder = { Text(text = "Please enter application quantity") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        OutlinedTextField(
+            value = applicationPrice,
+            onValueChange = { newPrice -> applicationPrice = newPrice },
+            label = { Text(text = "Unit Application Price") },
+            placeholder = { Text(text = "Please enter unit application price") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        OutlinedTextField(
+            value = desc,
+            onValueChange = { newDesc -> desc = newDesc },
             label = { Text(text = "Brief description") },
-            placeholder = { Text(text = "Please enter product description") },
+            placeholder = { Text(text = "Please enter application description") },
             modifier = Modifier.fillMaxWidth().height(150.dp),
-            singleLine = false)
-        Row (modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween){
-            Button(onClick = {}) { Text(text = "All Products") }
+            singleLine = false
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Button(onClick = {}) { Text(text = "All Applications") }
             Button(onClick = {
-                val productRepository = ProductViewModel()
-                productRepository.updateProduct(
+                val applicationRepository = ProductViewModel() // Consider renaming class
+                applicationRepository.updateProduct(
                     context = context,
                     navController = navController,
-                    productname = productname,
-                    productquantity = productquantity,
-                    productprice = productprice,
+                    productname = applicationName,
+                    productquantity = applicationQuantity,
+                    productprice = applicationPrice,
                     desc = desc,
-                    productId = productId
+                    productId = applicationId
                 )
             }) { Text(text = "UPDATE") }
         }
