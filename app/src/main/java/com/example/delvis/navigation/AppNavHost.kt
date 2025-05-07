@@ -18,35 +18,90 @@ import com.example.delvis.ui.theme.screens.jobs.JobSearchScreen
 import com.example.delvis.ui.theme.screens.productsimport.ViewApplications
 import com.example.delvis.ui.theme.screens.register.RegisterScreen
 
+//@Composable
+//fun AppNavHost(navController: NavHostController = rememberNavController(), startDestination: String = ROUTE_SPLASH) {
+//    NavHost(navController = navController, startDestination = startDestination) {
+//        composable(ROUTE_SPLASH) {
+//            SplashScreen {
+//                navController.navigate(ROUTE_REGISTER) {
+//                    popUpTo(ROUTE_SPLASH) { inclusive = true }
+//                }
+//            }
+//        }
+//        composable(ROUTE_REGISTER) { RegisterScreen(navController) }
+//        composable(ROUTE_LOGIN) { LoginScreen(navController) }
+//        composable(ROUTE_DASHBOARD) { DashboardScreen(navController) }
+//
+//        composable(ROUTE_ADD_JOB) { AddjobScreen(navController) }
+//        composable(ROUTE_VIEW_JOBS) { ViewJobs(navController) }
+//        composable(ROUTE_SEARCH_JOB) { JobSearchScreen(navController) }
+//        composable("$ROUTE_UPDATE_JOB/{jobId}") { backStackEntry ->
+//            backStackEntry.arguments?.getString("jobId")?.let {
+//                UpdatejobScreen(navController, it)
+//            }
+//        }
+//        composable(ROUTE_ADD_APPLICATION) { AddApplicationScreen(navController) }
+//        composable(ROUTE_APPLICATION_BOARD) { ApplicationBoard(navController) }
+//        composable(ROUTE_VIEW_APPLICATION) { ViewApplications(navController) }
+//        composable("$ROUTE_UPDATE_APPLICATION/{jobId}") { backStackEntry ->
+//            backStackEntry.arguments?.getString("applicationId")?.let {
+//                UpdateApplicationScreen(navController, it)
+//            }
+//        }
+//    }
+//}
+
+
+
 @Composable
-fun AppNavHost(navController: NavHostController = rememberNavController(), startDestination: String = ROUTE_SPLASH) {
+fun AppNavHost(
+    navController: NavHostController = rememberNavController(),
+    startDestination: String = ROUTE_SPLASH
+) {
     NavHost(navController = navController, startDestination = startDestination) {
         composable(ROUTE_SPLASH) {
-            SplashScreen {
-                navController.navigate(ROUTE_REGISTER) {
-                    popUpTo(ROUTE_SPLASH) { inclusive = true }
-                }
-            }
+            // Pass the controller in and let SplashScreen perform its own navigation
+            SplashScreen(navController)
         }
-        composable(ROUTE_REGISTER) { RegisterScreen(navController) }
-        composable(ROUTE_LOGIN) { LoginScreen(navController) }
-        composable(ROUTE_DASHBOARD) { DashboardScreen(navController) }
+        composable(ROUTE_REGISTER) {
+            RegisterScreen(navController)
+        }
+        composable(ROUTE_LOGIN) {
+            LoginScreen(navController)
+        }
+        composable(ROUTE_DASHBOARD) {
+            DashboardScreen(navController)
+        }
 
-        composable(ROUTE_ADD_JOB) { AddjobScreen(navController) }
-        composable(ROUTE_VIEW_JOBS) { ViewJobs(navController) }
-        composable(ROUTE_SEARCH_JOB) { JobSearchScreen(navController) }
-        composable("$ROUTE_UPDATE_JOB/{jobId}") { backStackEntry ->
-            backStackEntry.arguments?.getString("jobId")?.let {
-                UpdatejobScreen(navController, it)
-            }
+        composable(ROUTE_ADD_JOB) {
+            AddjobScreen(navController)
         }
-        composable(ROUTE_ADD_APPLICATION) { AddApplicationScreen(navController) }
-        composable(ROUTE_APPLICATION_BOARD) { ApplicationBoard(navController) }
-        composable(ROUTE_VIEW_APPLICATION) { ViewApplications(navController) }
-        composable("$ROUTE_UPDATE_APPLICATION/{jobId}") { backStackEntry ->
-            backStackEntry.arguments?.getString("applicationId")?.let {
-                UpdateApplicationScreen(navController, it)
-            }
+        composable(ROUTE_VIEW_JOBS) {
+            ViewJobs(navController)
+        }
+        composable(ROUTE_SEARCH_JOB) {
+            JobSearchScreen(navController)
+        }
+        composable("$ROUTE_UPDATE_JOB/{jobId}") { backStackEntry ->
+            backStackEntry.arguments
+                ?.getString("jobId")
+                ?.let { UpdatejobScreen(navController, it) }
+        }
+
+        composable(ROUTE_ADD_APPLICATION) {
+            AddApplicationScreen(navController)
+        }
+        composable(ROUTE_APPLICATION_BOARD) {
+            ApplicationBoard(navController)
+        }
+        composable(ROUTE_VIEW_APPLICATION) {
+            ViewApplications(navController)
+        }
+        composable("$ROUTE_UPDATE_APPLICATION/{applicationId}") { backStackEntry ->
+            backStackEntry.arguments
+                ?.getString("applicationId")
+                ?.let { UpdateApplicationScreen(navController, it) }
         }
     }
 }
+

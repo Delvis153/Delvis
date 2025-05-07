@@ -1,6 +1,5 @@
 package com.example.delvis.ui.theme.screens.dashboard
 
-import android.R.attr.title
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.Image
@@ -18,14 +17,14 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Email
+//import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MailOutline
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Phone
+//import androidx.compose.material.icons.filled.Menu
+//import androidx.compose.material.icons.filled.Person
+//import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Share
+//import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -53,12 +52,12 @@ import androidx.navigation.compose.rememberNavController
 import com.example.delvis.R
 import com.example.delvis.navigation.ROUTE_ADD_APPLICATION
 import com.example.delvis.navigation.ROUTE_ADD_JOB
-import com.example.delvis.navigation.ROUTE_ADD_PRODUCT
+//import com.example.delvis.navigation.ROUTE_ADD_PRODUCT
 import com.example.delvis.navigation.ROUTE_APPLICATION_BOARD
 import com.example.delvis.navigation.ROUTE_DASHBOARD
 import com.example.delvis.navigation.ROUTE_LOGIN
 import com.example.delvis.navigation.ROUTE_SEARCH_JOB
-import com.example.delvis.navigation.ROUTE_VIEW_JOBS
+//import com.example.delvis.navigation.ROUTE_VIEW_JOBS
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -185,7 +184,7 @@ fun DashboardScreen(navController: NavController) {
             }
         }
     ) {
-        innerPadding ->
+            innerPadding ->
         Box {
             Image(
                 painter = painterResource(id = R.drawable.background),
@@ -218,25 +217,30 @@ fun DashboardScreen(navController: NavController) {
 //                            contentDescription = "Profile"
 //                        )
 //                    }
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = {
+                        // TODO: Implement search action
+                    }) {
                         Icon(
-                            Icons.Filled.Search,
-                            contentDescription = "Search"
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = "Search",
+                            tint = Color.White
                         )
                     }
+
                     IconButton(onClick = {
                         navController.navigate(ROUTE_LOGIN)
-                        }) {
+                    }) {
                         Icon(
                             Icons.Filled.AccountCircle,
-                            contentDescription = "Logout"
+                            contentDescription = "Logout",
+                            tint = Color.White
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Magenta,
-                    titleContentColor = Color.Black,
-                    navigationIconContentColor = Color.Black
+                    containerColor = Color.Black,
+                    titleContentColor = Color.White,
+                    navigationIconContentColor = Color.White
                 )
 
             )
@@ -244,17 +248,25 @@ fun DashboardScreen(navController: NavController) {
                 Card(
                     modifier = Modifier
                         .padding(10.dp)
-                        .clickable {navController.navigate(ROUTE_ADD_APPLICATION)},
+                        .clickable { navController.navigate(ROUTE_ADD_APPLICATION) },
                     shape = RoundedCornerShape(20.dp),
                     elevation = CardDefaults.cardElevation(10.dp),
-                    colors = CardDefaults.cardColors(Color.Cyan)
-
+                    colors = CardDefaults.cardColors(containerColor = Color.Black)
                 ) {
                     Box(
-                        modifier = Modifier.height(100.dp).padding(25.dp),
+                        modifier = Modifier
+                            .height(100.dp)
+                            .padding(25.dp),
                         contentAlignment = Alignment.Center
-                    ) { Text(text = "Make An Application") }
+                    ) {
+                        Text(
+                            text = "Make An Application",
+                            color = Color.White // Ensures text is visible on black background
+                        )
+                    }
                 }
+
+
 
 
 //                Card(
@@ -293,13 +305,16 @@ fun DashboardScreen(navController: NavController) {
 
                     shape = RoundedCornerShape(20.dp),
                     elevation = CardDefaults.cardElevation(10.dp),
-                    colors = CardDefaults.cardColors(Color.Cyan)
+                    colors = CardDefaults.cardColors(Color.Black)
 
                 ) {
                     Box(
                         modifier = Modifier.height(100.dp).padding(25.dp),
                         contentAlignment = Alignment.Center
-                    ) { Text(text = "Add a Job") }
+                    ) { Text(text = "Add a Job",
+                        color = Color.White
+                    )
+                    }
                 }
 
 //                Card(
