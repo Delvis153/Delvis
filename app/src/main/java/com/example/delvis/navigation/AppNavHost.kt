@@ -1,6 +1,8 @@
 package com.example.delvis.navigation
 
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -15,8 +17,9 @@ import com.example.delvis.ui.theme.screens.applications.AddApplicationScreen
 import com.example.delvis.ui.theme.screens.applications.ApplicationBoard
 import com.example.delvis.ui.theme.screens.applications.UpdateApplicationScreen
 import com.example.delvis.ui.theme.screens.jobs.JobSearchScreen
-import com.example.delvis.ui.theme.screens.productsimport.ViewApplications
+import com.example.delvis.ui.theme.screens.applications.ViewApplications
 import com.example.delvis.ui.theme.screens.register.RegisterScreen
+import com.example.delvis.ui.theme.screens.requirements.ResumeScreen
 
 //@Composable
 //fun AppNavHost(navController: NavHostController = rememberNavController(), startDestination: String = ROUTE_SPLASH) {
@@ -102,6 +105,19 @@ fun AppNavHost(
                 ?.getString("applicationId")
                 ?.let { UpdateApplicationScreen(navController, it) }
         }
+
+
+        composable(ROUTE_RESUME) {
+            ResumeScreen(navController)
+        }
     }
 }
 
+//label = {
+//    Text(
+//        item.second,
+//        softWrap = false,
+//        maxLines = 1,
+//        fontSize = 12.sp
+//    )
+//},

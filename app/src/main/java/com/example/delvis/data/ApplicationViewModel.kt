@@ -10,13 +10,10 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import com.example.delvis.models.ProductModel
-import com.example.delvis.navigation.ROUTE_VIEW_PRODUCTS
+import com.example.delvis.models.ApplicationModel
+import com.example.delvis.navigation.ROUTE_VIEW_APPLICATION
 import com.example.delvis.network.ImgurService
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -28,8 +25,10 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
-class ProductViewModel : ViewModel() {
-    private val database = FirebaseDatabase.getInstance().reference.child("Products")
+
+class ApplicationViewModel : ViewModel() {
+    private val database = FirebaseDatabase.getInstance().reference.child("Applications")
+
     private fun getImgurService(): ImgurService {
         val logging = HttpLoggingInterceptor()
         logging.level = HttpLoggingInterceptor.Level.BODY
@@ -43,6 +42,7 @@ class ProductViewModel : ViewModel() {
             .build()
         return retrofit.create(ImgurService::class.java)
     }
+
     private fun getFileFromUri(context: Context, uri: Uri): File? {
         return try {
             val inputStream = context.contentResolver.openInputStream(uri)
@@ -56,12 +56,14 @@ class ProductViewModel : ViewModel() {
             null
         }
     }
-    fun uploadProductWithImage(
+
+    fun uploadApplicationWithImage(
         uri: Uri,
         context: Context,
-        productname: String,
-        productquantity: String,
-        productprice: String,
+        applicantsName: String,
+        applicantsGender: String,
+        applicantsDesiredjob: String,
+        applicantsExperience: String,
         desc: String,
         navController: NavController
     ) {
@@ -74,30 +76,38 @@ class ProductViewModel : ViewModel() {
                     }
                     return@launch
                 }
+
                 val reqFile = file.asRequestBody("image/*".toMediaTypeOrNull())
                 val body = MultipartBody.Part.createFormData("image", file.name, reqFile)
                 val response = getImgurService().uploadImage(
                     body,
                     "Client-ID 4a9cd0ac9fd5d4f"
                 )
+
                 if (response.isSuccessful) {
                     val imageUrl = response.body()?.data?.link ?: ""
-                    val productId = database.push().key ?: ""
-                    val product = ProductModel(
-                        productname, productquantity, productprice,desc, imageUrl, productId
+                    val applicationId = database.push().key ?: ""
+                    val application = ApplicationModel(
+                        applicantsName,
+                        applicantsGender,
+                        applicantsDesiredjob,
+                        applicantsExperience,
+                        desc,
+                        imageUrl,
+                        applicationId
                     )
-                    database.child(productId).setValue(product)
+                    database.child(applicationId).setValue(application)
                         .addOnSuccessListener {
                             viewModelScope.launch {
                                 withContext(Dispatchers.Main) {
-                                    Toast.makeText(context, "Product saved successfully", Toast.LENGTH_SHORT).show()
-                                    navController.navigate(ROUTE_VIEW_PRODUCTS)
+                                    Toast.makeText(context, "Application saved successfully", Toast.LENGTH_SHORT).show()
+                                    navController.navigate(ROUTE_VIEW_APPLICATION)
                                 }
                             }
                         }.addOnFailureListener {
                             viewModelScope.launch {
                                 withContext(Dispatchers.Main) {
-                                    Toast.makeText(context, "Failed to save product", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, "Failed to save application", Toast.LENGTH_SHORT).show()
                                 }
                             }
                         }
@@ -113,68 +123,84 @@ class ProductViewModel : ViewModel() {
             }
         }
     }
-    fun viewProducts(
-        product: MutableState<ProductModel>,
-        products: SnapshotStateList<ProductModel>,
+
+    fun viewApplications(
+        application: MutableState<ApplicationModel>,
+        applications: SnapshotStateList<ApplicationModel>,
         context: Context
-    ): SnapshotStateList<ProductModel> {
-        val ref = FirebaseDatabase.getInstance().getReference("Products")
-        ref.addValueEventListener(object: ValueEventListener {
+    ): SnapshotStateList<ApplicationModel> {
+        val ref = FirebaseDatabase.getInstance().getReference("Applications")
+        ref.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                products.clear()
+                applications.clear()
                 for (snap in snapshot.children) {
-                    val value = snap.getValue(ProductModel::class.java)
+                    val value = snap.getValue(ApplicationModel::class.java)
                     value?.let {
-                        products.add(it)
+                        applications.add(it)
                     }
                 }
-                if (products.isNotEmpty()) {
-                    product.value = products.first()
+                if (applications.isNotEmpty()) {
+                    application.value = applications.first()
                 }
             }
+
             override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(context, "Failed to fetch products: ${error.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Failed to fetch applications: ${error.message}", Toast.LENGTH_SHORT).show()
             }
         })
-        return products
+        return applications
     }
-    fun updateProduct(context: Context,navController: NavController,
-                      productname: String,productquantity: String,
-                      productprice: String,desc: String,productId: String){
+
+    fun updateApplication(
+        context: Context,
+        navController: NavController,
+        applicantsName: String,
+        applicantsGender: String,
+        applicantsDesiredjob: String,
+        applicantsExperience: String,
+        desc: String,
+        applicationId: String,
+        imageUri: Uri?
+    ) {
         val databaseReference = FirebaseDatabase.getInstance()
-            .getReference("Products/$productId")
-        val updatedClient = ProductModel(productname, productquantity,
-            productprice, desc,"",productId)
-        databaseReference.setValue(updatedClient)
+            .getReference("Applications/$applicationId")
+        val updatedApp = ApplicationModel(applicantsName, applicantsGender, applicantsDesiredjob, applicantsExperience, desc, "", applicationId)
+        databaseReference.setValue(updatedApp)
             .addOnCompleteListener { task ->
-                if (task.isSuccessful){
-                    Toast.makeText(context,"Product Updated Successfully",Toast.LENGTH_LONG).show()
-                    navController.navigate(ROUTE_VIEW_PRODUCTS)
-                }else{
-                    Toast.makeText(context,"Product update failed",Toast.LENGTH_LONG).show()
+                if (task.isSuccessful) {
+                    Toast.makeText(context, "Application Updated Successfully", Toast.LENGTH_LONG).show()
+                    navController.navigate(ROUTE_VIEW_APPLICATION)
+                } else {
+                    Toast.makeText(context, "Application update failed", Toast.LENGTH_LONG).show()
                 }
             }
     }
-    fun deleteProduct(context: Context,productId: String,
-                      navController: NavController){
+
+
+    fun deleteApplication(
+        context: Context,
+        applicationId: String,
+        navController: NavController
+    ) {
         AlertDialog.Builder(context)
-            .setTitle("Delete Product")
-            .setMessage("Are you sure you want to delete this product?")
-            .setPositiveButton("Yes"){ _, _ ->
+            .setTitle("Delete Application")
+            .setMessage("Are you sure you want to delete this application?")
+            .setPositiveButton("Yes") { _, _ ->
                 val databaseReference = FirebaseDatabase.getInstance()
-                    .getReference("Products/$productId")
-                databaseReference.removeValue().addOnCompleteListener {
-                        task ->
-                    if (task.isSuccessful){
-                        Toast.makeText(context,"Product deleted Successfully",Toast.LENGTH_LONG).show()
-                    }else{
-                        Toast.makeText(context,"Product not deleted",Toast.LENGTH_LONG).show()
+                    .getReference("Applications/$applicationId")
+                databaseReference.removeValue().addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Toast.makeText(context, "Application deleted successfully", Toast.LENGTH_LONG).show()
+                    } else {
+                        Toast.makeText(context, "Application not deleted", Toast.LENGTH_LONG).show()
                     }
                 }
             }
-            .setNegativeButton("No"){ dialog, _ ->
+            .setNegativeButton("No") { dialog, _ ->
                 dialog.dismiss()
             }
             .show()
     }
 }
+
+

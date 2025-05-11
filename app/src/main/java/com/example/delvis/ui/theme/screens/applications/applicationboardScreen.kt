@@ -103,7 +103,6 @@ package com.example.delvis.ui.theme.screens.applications
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -124,7 +123,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Create
@@ -141,8 +139,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.NavHostController
 import com.example.delvis.R
-import com.example.delvis.navigation.ROUTE_ADD_APPLICATION
-import com.example.delvis.navigation.ROUTE_ADD_JOB
 import com.example.delvis.navigation.ROUTE_APPLICATION_BOARD
 import com.example.delvis.navigation.ROUTE_DASHBOARD
 import com.example.delvis.navigation.ROUTE_LOGIN

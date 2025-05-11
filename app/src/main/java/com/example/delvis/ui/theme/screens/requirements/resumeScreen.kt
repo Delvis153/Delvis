@@ -1,18 +1,27 @@
-package com.example.delvis.ui.theme.screens.dashboard
+package com.example.delvis.ui.theme.screens.requirements
 
 import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import androidx.compose.foundation.border
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Create
@@ -20,51 +29,28 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.delvis.R
-import com.example.delvis.navigation.ROUTE_ADD_APPLICATION
-import com.example.delvis.navigation.ROUTE_ADD_JOB
 import com.example.delvis.navigation.ROUTE_DASHBOARD
 import com.example.delvis.navigation.ROUTE_LOGIN
 import com.example.delvis.navigation.ROUTE_RESUME
 import com.example.delvis.navigation.ROUTE_VIEW_APPLICATION
 import com.example.delvis.navigation.ROUTE_VIEW_JOBS
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.text.font.FontWeight
-import android.content.Context
-import androidx.compose.foundation.layout.*
+import com.example.delvis.ui.theme.screens.dashboard.shareApp
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.filled.Article
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Work
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DashboardScreen(navController: NavController) {
-    val selectedItem = remember { mutableStateOf(0) }
+fun ResumeScreen(navController: NavHostController) {
+    val selectedItem = remember { mutableStateOf(1) }
     val context = LocalContext.current
 
     Scaffold(
@@ -136,10 +122,9 @@ fun DashboardScreen(navController: NavController) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(16.dp)
-                .background(Color.White),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
+            // Top bar
             TopAppBar(
                 title = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -159,8 +144,8 @@ fun DashboardScreen(navController: NavController) {
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* TODO: Implement search */ }) {
-                        Icon(Icons.Filled.Search, contentDescription = "Search", tint = Color.Black)
+                  IconButton(onClick = { /* TODO: Implement search */ }) {
+                       Icon(Icons.Filled.Search, contentDescription = "Search", tint = Color.Black)
                     }
                     IconButton(onClick = { navController.navigate(ROUTE_LOGIN) }) {
                         Icon(Icons.Filled.AccountCircle, contentDescription = "Logout", tint = Color.Black)
@@ -174,57 +159,107 @@ fun DashboardScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Card Buttons
-            CardItem(label = "Make An Application") {
-                navController.navigate(ROUTE_ADD_APPLICATION)
+            // Section cards
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(24.dp)
+            ) {
+                item {
+                    SectionCard(
+                        title = "Resumes",
+                        onCreateClick = { navController.navigate("create_resume") },
+                        onArrowClick = { navController.navigate("resumes_list") }
+                    )
+                }
+                item {
+                    SectionCard(
+                        title = "Cover Letters",
+                        onCreateClick = { navController.navigate("create_cover_letter") },
+                        onArrowClick = { navController.navigate("cover_letters_list") }
+                    )
+                }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            CardItem(label = "Add a Job") {
-                navController.navigate(ROUTE_ADD_JOB)
+            // Floating Action Button
+            Box(modifier = Modifier.fillMaxSize()) {
+                FloatingActionButton(
+                    onClick = { navController.navigate("create_document") },
+                    containerColor = Color(0xFF6200EE),
+                    contentColor = Color.White,
+                    shape = CircleShape,
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(16.dp)
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = "Add")
+                }
             }
         }
     }
 }
 
 @Composable
-fun CardItem(label: String, onClick: () -> Unit) {
+fun SectionCard(
+    title: String,
+    onCreateClick: () -> Unit,
+    onArrowClick: () -> Unit
+) {
+    val purple = Color(0xFF6200EE)
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(120.dp)
-            .clickable { onClick() },
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(6.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF6200EE))
+            .height(180.dp),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = purple)
     ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxSize()
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                text = label,
-                color = Color.White,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold
-            )
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = title,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+                IconButton(onClick = onArrowClick) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = "View All",
+                        tint = Color.White
+                    )
+                }
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp)
+                    .clickable(onClick = onCreateClick)
+                    .background(purple, RoundedCornerShape(8.dp))
+                    .border(1.dp, Color.White, RoundedCornerShape(8.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text("Create New", color = Color.White)
+                    Icon(Icons.Default.Add, contentDescription = "Add", tint = Color.White)
+                }
+            }
         }
     }
-}
-
-fun shareApp(context: Context) {
-    val sendIntent = Intent().apply {
-        action = Intent.ACTION_SEND
-        putExtra(Intent.EXTRA_TEXT, "Download app here: https://www.download.com")
-        type = "text/plain"
-    }
-    val shareIntent = Intent.createChooser(sendIntent, null)
-    context.startActivity(shareIntent)
 }
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun DashboardScreenPreview() {
-    DashboardScreen(rememberNavController())
+fun ResumePreview() {
+    ResumeScreen(rememberNavController())
 }
+
+

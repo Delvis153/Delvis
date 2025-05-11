@@ -34,137 +34,159 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.delvis.R
 import coil.compose.AsyncImage
-import com.example.delvis.data.ProductViewModel
+import com.example.delvis.data.ApplicationViewModel
 import com.example.delvis.navigation.ROUTE_DASHBOARD
+import androidx.compose.ui.text.TextStyle
+
+
 
 @Composable
-fun AddApplicationScreen(navController: NavController){
-    val imageUri = rememberSaveable() { mutableStateOf<Uri?>(null) }
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent())
-    { uri: Uri? -> uri?.let { imageUri.value = it } }
-    var applicationName by remember { mutableStateOf("") }
-    var applicationQuantity by remember { mutableStateOf("") }
-    var applicationPrice by remember { mutableStateOf("") }
-    var applicationBrand by remember { mutableStateOf("") }
+fun AddApplicationScreen(navController: NavController) {
+    val imageUri = rememberSaveable { mutableStateOf<Uri?>(null) }
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        uri?.let { imageUri.value = it }
+    }
+
+    var applicantsName by remember { mutableStateOf("") }
+    var applicantsDesiredjob by remember { mutableStateOf("") }
+    var applicantsExperience by remember { mutableStateOf("") }
+    var applicantsGender by remember { mutableStateOf("") }
     var desc by remember { mutableStateOf("") }
-    val applicationViewModel: ProductViewModel = viewModel() // Rename ViewModel separately if needed
+
+    val applicationViewModel: ApplicationViewModel = viewModel()
     val context = LocalContext.current
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(20.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black)
+            .padding(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Text(
             text = "ADD NEW APPLICATION",
-            fontSize = 20.sp,
-            color = Color.White,
+            fontSize = 24.sp,
+            color = Color.Cyan,
             fontFamily = FontFamily.SansSerif,
             fontStyle = FontStyle.Normal,
             textAlign = TextAlign.Center,
             modifier = Modifier
-                .background(Color.Black)
-                .padding(7.dp)
+                .padding(12.dp)
                 .fillMaxWidth()
         )
 
         Card(
             shape = CircleShape,
-            modifier = Modifier.padding(10.dp).size(200.dp)
+            modifier = Modifier
+                .padding(10.dp)
+                .size(200.dp)
         ) {
             AsyncImage(
                 model = imageUri.value ?: R.drawable.ic_person,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.size(200.dp)
+                modifier = Modifier
+                    .size(200.dp)
                     .clickable { launcher.launch("image/*") }
             )
         }
 
-        Text(text = "Attach your application's photo")
-
-        OutlinedTextField(
-            value = applicationName,
-            onValueChange = { newName -> applicationName = newName },
-            label = { Text(text = "Application Name") },
-            placeholder = { Text(text = "Please enter your application's name") },
-            modifier = Modifier.fillMaxWidth()
+        Text(
+            text = "Attach your CV's photo",
+            color = Color.LightGray,
+            modifier = Modifier.padding(bottom = 12.dp)
         )
 
         OutlinedTextField(
-            value = applicationQuantity,
-            onValueChange = { newQuantity -> applicationQuantity = newQuantity },
-            label = { Text(text = "Application Quantity") },
-            placeholder = { Text(text = "Please enter the application's quantity") },
-            modifier = Modifier.fillMaxWidth()
+            value = applicantsName,
+            onValueChange = { applicantsName = it },
+            label = { Text("Applicant's Name", color = Color.White) },
+            placeholder = { Text("Please enter your name", color = Color.Gray) },
+            modifier = Modifier.fillMaxWidth(),
+            textStyle = TextStyle(color = Color.White)
         )
 
         OutlinedTextField(
-            value = applicationPrice,
-            onValueChange = { newPrice -> applicationPrice = newPrice },
-            label = { Text(text = "Application Price") },
-            placeholder = { Text(text = "Please enter the application's price") },
-            modifier = Modifier.fillMaxWidth()
+            value = applicantsGender,
+            onValueChange = { applicantsGender = it },
+            label = { Text("Applicants Gender", color = Color.White) },
+            placeholder = { Text("Please enter your gender", color = Color.Gray) },
+            modifier = Modifier.fillMaxWidth(),
+            textStyle = TextStyle(color = Color.White)
         )
 
         OutlinedTextField(
-            value = applicationBrand,
-            onValueChange = { newBrand -> applicationBrand = newBrand },
-            label = { Text(text = "Application Brand") },
-            placeholder = { Text(text = "Please enter the application's brand") },
-            modifier = Modifier.fillMaxWidth()
+            value = applicantsDesiredjob,
+            onValueChange = { applicantsDesiredjob = it },
+            label = { Text("Applicants Desired Job ", color = Color.White) },
+            placeholder = { Text("Please enter the desired job", color = Color.Gray) },
+            modifier = Modifier.fillMaxWidth(),
+            textStyle = TextStyle(color = Color.White)
+        )
+
+        OutlinedTextField(
+            value = applicantsExperience,
+            onValueChange = { applicantsExperience= it },
+            label = { Text("Applicants Experience", color = Color.White) },
+            placeholder = { Text("Please enter your job experience", color = Color.Gray) },
+            modifier = Modifier.fillMaxWidth(),
+            textStyle = TextStyle(color = Color.White)
         )
 
         OutlinedTextField(
             value = desc,
-            onValueChange = { newDesc -> desc = newDesc },
-            label = { Text(text = "Brief description") },
-            placeholder = { Text(text = "Please enter application's description") },
-            modifier = Modifier.fillMaxWidth().height(150.dp),
-            singleLine = false
+            onValueChange = { desc = it },
+            label = { Text("Brief description", color = Color.White) },
+            placeholder = { Text("Please enter application's description", color = Color.Gray) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(150.dp),
+            singleLine = false,
+            textStyle = TextStyle(color = Color.White)
         )
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 20.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Button(onClick = {
-                navController.navigate(ROUTE_DASHBOARD)
-            }) {
-                Text(text = "Home")
+            Button(
+                onClick = { navController.navigate(ROUTE_DASHBOARD) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray)
+            ) {
+                Text("Home", color = Color.White)
             }
+
             Button(
                 onClick = {
                     imageUri.value?.let {
-                        applicationViewModel.uploadProductWithImage(
+                        applicationViewModel.uploadApplicationWithImage(
                             it,
                             context,
-                            applicationName,
-                            applicationQuantity,
-                            applicationPrice,
+                            applicantsName,
+                            applicantsGender,
+                            applicantsExperience,
+                            applicantsDesiredjob,
                             desc,
                             navController
                         )
                     } ?: Toast.makeText(context, "Please select an image", Toast.LENGTH_SHORT).show()
                 },
-                colors = ButtonDefaults.buttonColors(Color.Cyan)
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Cyan)
             ) {
-                Text(text = "Save")
+                Text("Save", color = Color.Black)
             }
         }
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun AddApplicationScreenPreview() {
-    AddApplicationScreen(rememberNavController())
-}
+
+
+

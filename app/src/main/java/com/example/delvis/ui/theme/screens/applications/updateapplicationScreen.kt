@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -32,36 +34,48 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.example.delvis.data.ProductViewModel
+import com.example.delvis.data.ApplicationViewModel
 import com.example.delvis.R
-import com.example.delvis.models.ProductModel
+import com.example.delvis.models.ApplicationModel
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.viewmodel.compose.viewModel
+
+
+
 @Composable
 fun UpdateApplicationScreen(navController: NavController, applicationId: String) {
     val context = LocalContext.current
-    val imageUri = rememberSaveable() { mutableStateOf<Uri?>(null) }
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent())
-    { uri: Uri? -> uri?.let { imageUri.value = it } }
+    val imageUri = rememberSaveable { mutableStateOf<Uri?>(null) }
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        uri?.let { imageUri.value = it }
+    }
 
-    var applicationName by remember { mutableStateOf("") }
-    var applicationQuantity by remember { mutableStateOf("") }
-    var applicationPrice by remember { mutableStateOf("") }
+    var applicantsName by remember { mutableStateOf("") }
+    var applicantsDesiredjob by remember { mutableStateOf("") }
+    var applicantsExperience by remember { mutableStateOf("") }
+    var applicantsGender by remember { mutableStateOf("") }
     var desc by remember { mutableStateOf("") }
 
-    val currentDataRef = FirebaseDatabase.getInstance()
-        .getReference().child("Applications/$applicationId")
+    val applicationViewModel: ApplicationViewModel = viewModel()
 
+    val currentDataRef = FirebaseDatabase.getInstance()
+        .getReference("Applications")
+        .child(applicationId)
+
+    // Fetch existing application data
     DisposableEffect(Unit) {
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val application = snapshot.getValue(ProductModel::class.java)
+                val application = snapshot.getValue(ApplicationModel::class.java)
                 application?.let {
-                    applicationName = it.productname
-                    applicationQuantity = it.productquantity
-                    applicationPrice = it.productprice
+                    applicantsName = it.applicantsName
+                    applicantsGender = it.applicantsGender
+                    applicantsDesiredjob = it.applicantsDesiredjob
+                    applicantsExperience = it.applicantsExperience
                     desc = it.desc
                 }
             }
@@ -75,19 +89,25 @@ fun UpdateApplicationScreen(navController: NavController, applicationId: String)
         onDispose { currentDataRef.removeEventListener(listener) }
     }
 
+    // UI
     Column(
-        modifier = Modifier.fillMaxSize().padding(10.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Card(
             shape = CircleShape,
-            modifier = Modifier.padding(10.dp).size(200.dp)
+            modifier = Modifier
+                .padding(10.dp)
+                .size(200.dp)
         ) {
             AsyncImage(
                 model = imageUri.value ?: R.drawable.ic_person,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.size(200.dp)
+                modifier = Modifier
+                    .size(200.dp)
                     .clickable { launcher.launch("image/*") }
             )
         }
@@ -95,55 +115,79 @@ fun UpdateApplicationScreen(navController: NavController, applicationId: String)
         Text(text = "Attach application image")
 
         OutlinedTextField(
-            value = applicationName,
-            onValueChange = { newName -> applicationName = newName },
-            label = { Text(text = "Application Name") },
-            placeholder = { Text(text = "Please enter application name") },
+            value = applicantsName,
+            onValueChange = { applicantsName = it },
+            label = { Text("Applicants Name") },
+            placeholder = { Text("Please enter your name") },
             modifier = Modifier.fillMaxWidth()
         )
 
         OutlinedTextField(
-            value = applicationQuantity,
-            onValueChange = { newQty -> applicationQuantity = newQty },
-            label = { Text(text = "Application Quantity") },
-            placeholder = { Text(text = "Please enter application quantity") },
+            value = applicantsGender,
+            onValueChange = { applicantsGender = it },
+            label = { Text("Applicants Gender") },
+            placeholder = { Text("Please enter your gender") },
             modifier = Modifier.fillMaxWidth()
         )
 
         OutlinedTextField(
-            value = applicationPrice,
-            onValueChange = { newPrice -> applicationPrice = newPrice },
-            label = { Text(text = "Unit Application Price") },
-            placeholder = { Text(text = "Please enter unit application price") },
+            value = applicantsDesiredjob,
+            onValueChange = { applicantsDesiredjob = it },
+            label = { Text("Applicants Desired Job") },
+            placeholder = { Text("Please enter your desired job") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        OutlinedTextField(
+            value = applicantsExperience,
+            onValueChange = { applicantsExperience = it },
+            label = { Text("Unit Applicants Experience") },
+            placeholder = { Text("Please enter your jobs experience") },
             modifier = Modifier.fillMaxWidth()
         )
 
         OutlinedTextField(
             value = desc,
-            onValueChange = { newDesc -> desc = newDesc },
-            label = { Text(text = "Brief description") },
-            placeholder = { Text(text = "Please enter application description") },
-            modifier = Modifier.fillMaxWidth().height(150.dp),
+            onValueChange = { desc = it },
+            label = { Text("Brief description") },
+            placeholder = { Text("Please enter application description") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(150.dp),
             singleLine = false
         )
+
+        Spacer(modifier = Modifier.height(20.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Button(onClick = {}) { Text(text = "All Applications") }
-            Button(onClick = {
-                val applicationRepository = ProductViewModel() // Consider renaming class
-                applicationRepository.updateProduct(
-                    context = context,
-                    navController = navController,
-                    productname = applicationName,
-                    productquantity = applicationQuantity,
-                    productprice = applicationPrice,
-                    desc = desc,
-                    productId = applicationId
-                )
-            }) { Text(text = "UPDATE") }
+            Button(
+                onClick = { navController.navigate("AllApplicationsScreen") },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
+            ) {
+                Text(text = "All Applications")
+            }
+
+            Button(
+                onClick = {
+                    applicationViewModel.updateApplication(
+                        context = context,
+                        navController = navController,
+                        applicantsName = applicantsName,
+                        applicantsGender = applicantsGender,
+                        applicantsDesiredjob = applicantsDesiredjob,
+                        applicantsExperience = applicantsExperience,
+                        desc = desc,
+                        applicationId = applicationId,
+                        imageUri = imageUri.value // Pass image if needed
+                    )
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Cyan)
+            ) {
+                Text(text = "UPDATE")
+            }
         }
     }
 }
