@@ -2,8 +2,7 @@ package com.example.delvis.models
 
 
 enum class DocumentType {
-    RESUME,
-    COVER_LETTER
+    RESUME
 }
 
 data class DocumentItem(
@@ -14,8 +13,7 @@ data class DocumentItem(
 )
 
 data class ResumeModel(
-    val resumes: List<DocumentItem> = emptyList(),
-    val coverLetters: List<DocumentItem> = emptyList()
+    val resumes: List<DocumentItem> = emptyList()
 )
 
 

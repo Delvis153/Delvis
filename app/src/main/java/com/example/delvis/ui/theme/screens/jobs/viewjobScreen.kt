@@ -1,6 +1,6 @@
 package com.example.delvis.ui.theme.screens.jobs
 
-import android.content.Intent
+import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -22,7 +22,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
@@ -32,18 +31,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import coil.compose.AsyncImage
 import com.example.delvis.R
 import com.example.delvis.data.JobViewModel
 import com.example.delvis.models.JobModel
-import com.example.delvis.navigation.ROUTE_DASHBOARD
 import com.example.delvis.navigation.ROUTE_LOGIN
 import com.example.delvis.navigation.ROUTE_RESUME
 import com.example.delvis.navigation.ROUTE_VIEW_APPLICATION
 import com.example.delvis.navigation.ROUTE_VIEW_JOBS
-import androidx.compose.material.icons.filled.Work
 import androidx.compose.material.icons.filled.*
-
+import com.example.delvis.navigation.ROUTE_ADD_APPLICATION
+import com.example.delvis.navigation.ROUTE_RESUME_PREVIEW
+import android.net.Uri // Make sure this import is at the top of your file
+import com.example.delvis.navigation.ROUTE_DASHBOARD
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,6 +52,16 @@ fun ViewJobs(navController: NavHostController) {
     val emptyJobState = remember { mutableStateOf(JobModel("", "", "", "", "", "")) }
     val jobListState = remember { mutableStateListOf<JobModel>() }
     val selectedItem = remember { mutableStateOf(3) }
+    val searchQuery = remember { mutableStateOf("") }
+    val filteredJobs = remember(searchQuery.value, jobListState) {
+        if (searchQuery.value.isBlank()) jobListState
+        else jobListState.filter {
+            it.jobpositionname.contains(searchQuery.value, ignoreCase = true) ||
+                    it.joblocation.contains(searchQuery.value, ignoreCase = true) ||
+                    it.jobflexibility.contains(searchQuery.value, ignoreCase = true)
+        }
+    }
+
 
     LaunchedEffect(Unit) {
         jobRepository.viewJobs(emptyJobState, jobListState, context)
@@ -78,24 +87,18 @@ fun ViewJobs(navController: NavHostController) {
                         selectedItem.value = 1
                         navController.navigate(ROUTE_RESUME)
                     },
-                    icon = { Icon(Icons.Filled.Article, contentDescription = "Resume") },
-                    label = { Text("Resume") },
+                    icon = { Icon(Icons.Filled.AllInbox, contentDescription = "Docs") },
+                    label = { Text("Docs") },
                     alwaysShowLabel = true
                 )
                 NavigationBarItem(
                     selected = selectedItem.value == 2,
                     onClick = {
                         selectedItem.value = 2
-                        val sendIntent = Intent().apply {
-                            action = Intent.ACTION_SEND
-                            putExtra(Intent.EXTRA_TEXT, "Download app here: https://www.download.com")
-                            type = "text/plain"
-                        }
-                        val shareIntent = Intent.createChooser(sendIntent, null)
-                        context.startActivity(shareIntent)
+                        navController.navigate(ROUTE_RESUME_PREVIEW)
                     },
-                    icon = { Icon(Icons.Filled.Send, contentDescription = "Share") },
-                    label = { Text("Share") },
+                    icon = { Icon(Icons.Filled.Article, contentDescription = "Resume") },
+                    label = { Text("Resume") },
                     alwaysShowLabel = true
                 )
                 NavigationBarItem(
@@ -144,17 +147,20 @@ fun ViewJobs(navController: NavHostController) {
                                     .height(32.dp)
                                     .padding(end = 8.dp)
                             )
-                            Text(text = "JobSeeker")
+                            Text(text = "JobSeeker",
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.Black)
                         }
                     },
                     actions = {
-                        IconButton(onClick = { /* TODO: Implement search */ }) {
-                            Icon(
-                                imageVector = Icons.Filled.Search,
-                                contentDescription = "Search",
-                                tint = Color.Black
-                            )
-                        }
+//                        IconButton(onClick = { /* TODO: Implement search */ }) {
+//                            Icon(
+//                                imageVector = Icons.Filled.Search,
+//                                contentDescription = "Search",
+//                                tint = Color.Black
+//                            )
+//                        }
                         IconButton(onClick = {
                             navController.navigate(ROUTE_LOGIN)
                         }) {
@@ -168,24 +174,41 @@ fun ViewJobs(navController: NavHostController) {
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = Color.Transparent,
                         titleContentColor = Color.White,
-                        navigationIconContentColor = Color.White
+                        navigationIconContentColor = Color.Black
                     )
                 )
 
                 Text(
-                    text = "All Jobs",
-                    fontSize = 30.sp,
+                    text = "ALL AVAILABLE JOBS",
+                    fontSize = 20.sp,
                     fontFamily = FontFamily.SansSerif,
                     color = Color.Black
                 )
                 Spacer(modifier = Modifier.height(20.dp))
+
+                OutlinedTextField(
+                    value = searchQuery.value,
+                    onValueChange = { searchQuery.value = it },
+                    label = { Text("Search jobs...") },
+                    leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "Search Icon") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp),
+                    singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Color(0xFF6200EE),
+                        unfocusedBorderColor = Color.Gray,
+                        focusedLabelColor = Color(0xFF6200EE),
+                        unfocusedLabelColor = Color.Gray
+                    )
+                )
 
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(top = 16.dp)
                 ) {
-                    items(jobListState) { job ->
+                    items(filteredJobs) { job ->
                         AnimatedJobItem(
                             job = job,
                             navController = navController,
@@ -226,21 +249,9 @@ fun AnimatedJobItem(
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Surface(
-                    shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier.size(100.dp),
-                    color = Color.White
-                ) {
-                    AsyncImage(
-                        model = job.imageUrl,
-                        contentDescription = "Job Image",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
-
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = job.jobpositionname,
@@ -257,10 +268,15 @@ fun AnimatedJobItem(
 
                 Row {
                     IconButton(onClick = {
-                        navController.navigate("update_job/${job.jobId}")
+                        job.jobId?.let {
+                            val encodedJobId = Uri.encode(it)
+                            Log.d("Navigation", "Navigating to update_job/$encodedJobId")
+                            navController.navigate("update_job/$encodedJobId")
+                        } ?: Log.e("Navigation", "Job ID is null")
                     }) {
-                        Icon(Icons.Filled.Edit, contentDescription = "Edit", tint = Color.White)
+                        Icon(Icons.Filled.Edit, contentDescription = "Edit/Update", tint = Color.White)
                     }
+
                     IconButton(onClick = {
                         jobRepository.deleteJob(context, job.jobId, navController)
                     }) {
@@ -279,6 +295,18 @@ fun AnimatedJobItem(
                     fontSize = 12.sp,
                     modifier = Modifier.padding(top = 8.dp)
                 )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Button(
+                    onClick = {
+                        navController.navigate(ROUTE_ADD_APPLICATION)
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.White)
+                ) {
+                    Text("Apply", color = Color(0xFF6200EE))
+                }
             } else {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
@@ -290,6 +318,8 @@ fun AnimatedJobItem(
         }
     }
 }
+
+
 
 @Preview(showBackground = true)
 @Composable

@@ -112,7 +112,7 @@ fun UpdateApplicationScreen(navController: NavController, applicationId: String)
             )
         }
 
-        Text(text = "Attach application image")
+        Text(text = "Attach Your Qualification Certificate/Degree")
 
         OutlinedTextField(
             value = applicantsName,
@@ -180,8 +180,7 @@ fun UpdateApplicationScreen(navController: NavController, applicationId: String)
                         applicantsDesiredjob = applicantsDesiredjob,
                         applicantsExperience = applicantsExperience,
                         desc = desc,
-                        applicationId = applicationId,
-                        imageUri = imageUri.value // Pass image if needed
+                        applicationId = applicationId
                     )
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Cyan)

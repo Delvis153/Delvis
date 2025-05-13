@@ -1,6 +1,8 @@
 package com.example.delvis.ui.theme.screens.applications
 
 import android.content.Intent
+import android.net.Uri
+import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -48,6 +50,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.filled.AllInbox
 import androidx.compose.material.icons.filled.Article
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Send
@@ -63,6 +66,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import com.example.delvis.navigation.ROUTE_RESUME_PREVIEW
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -101,26 +105,21 @@ fun ViewApplications(navController: NavHostController) {
                         selectedItem.value = 1
                         navController.navigate(ROUTE_RESUME)
                     },
-                    icon = { Icon(Icons.Filled.Article, contentDescription = "Resume") },
-                    label = { Text("Resume") },
+                    icon = { Icon(Icons.Filled.AllInbox, contentDescription = "Docs") },
+                    label = { Text("Docs") },
                     alwaysShowLabel = true
                 )
                 NavigationBarItem(
                     selected = selectedItem.value == 2,
                     onClick = {
                         selectedItem.value = 2
-                        val sendIntent = Intent().apply {
-                            action = Intent.ACTION_SEND
-                            putExtra(Intent.EXTRA_TEXT, "Download app here: https://www.download.com")
-                            type = "text/plain"
-                        }
-                        val shareIntent = Intent.createChooser(sendIntent, null)
-                        context.startActivity(shareIntent)
+                        navController.navigate(ROUTE_RESUME_PREVIEW)
                     },
-                    icon = { Icon(Icons.Filled.Send, contentDescription = "Share") },
-                    label = { Text("Share") },
+                    icon = { Icon(Icons.Filled.Article, contentDescription = "Resume") },
+                    label = { Text("Resume") },
                     alwaysShowLabel = true
                 )
+
                 NavigationBarItem(
                     selected = selectedItem.value == 3,
                     onClick = {
@@ -167,9 +166,9 @@ fun ViewApplications(navController: NavHostController) {
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* TODO: Search */ }) {
-                        Icon(Icons.Filled.Search, contentDescription = "Search", tint = Color.Black)
-                    }
+//                    IconButton(onClick = { /* TODO: Search */ }) {
+//                        Icon(Icons.Filled.Search, contentDescription = "Search", tint = Color.Black)
+//                    }
                     IconButton(onClick = { navController.navigate(ROUTE_LOGIN) }) {
                         Icon(Icons.Filled.AccountCircle, contentDescription = "Logout", tint = Color.Black)
                     }
@@ -240,7 +239,7 @@ fun AnimatedApplicationItem(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Surface(
-                    shape = CircleShape,
+                    shape = RoundedCornerShape(8.dp),
                     modifier = Modifier.size(60.dp),
                     color = Color.White
                 ) {
@@ -266,10 +265,14 @@ fun AnimatedApplicationItem(
                 }
                 Row {
                     IconButton(onClick = {
-                        navController.navigate("update_application/${application.applicationId}Id")
+                        application.applicationId?.let {
+                            val encodedId = Uri.encode(it)
+                            navController.navigate("update_application/$encodedId")
+                        } ?: Log.e("Navigation", "Application ID is null")
                     }) {
                         Icon(Icons.Filled.Edit, contentDescription = "Edit", tint = Color.White)
                     }
+
                     IconButton(onClick = {
                         applicationRepository.deleteApplication(
                             context,

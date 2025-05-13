@@ -78,6 +78,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -151,8 +152,8 @@ fun SplashScreen(navController: NavController) {
                 contentDescription = "Logo",
                 modifier = Modifier
                     .size(180.dp)
-                    .shadow(16.dp, shape = CircleShape)
-                    .background(Color.DarkGray, shape = CircleShape)
+                    .shadow(16.dp, shape = RoundedCornerShape(6.dp))
+                    .background(Color.DarkGray, shape = RoundedCornerShape(6.dp))
                     .padding(20.dp)
             )
 

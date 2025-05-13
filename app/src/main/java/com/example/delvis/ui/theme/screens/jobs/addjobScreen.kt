@@ -10,8 +10,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -35,16 +37,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import coil.compose.AsyncImage
-import com.example.delvis.R
 import com.example.delvis.data.JobViewModel
-import com.example.delvis.navigation.ROUTE_ADD_JOB
+import com.example.delvis.navigation.ROUTE_DASHBOARD
 
 
 @Composable
@@ -80,28 +78,6 @@ fun AddjobScreen(navController: NavController) {
                 .padding(12.dp)
                 .fillMaxWidth()
         )
-
-//        Card(
-//            shape = CircleShape,
-//            modifier = Modifier
-//                .padding(10.dp)
-//                .size(200.dp)
-//        ) {
-//            AsyncImage(
-//                model = imageUri.value ?: R.drawable.ic_person,
-//                contentDescription = null,
-//                contentScale = ContentScale.Crop,
-//                modifier = Modifier
-//                    .size(200.dp)
-//                    .clickable { launcher.launch("image/*") }
-//            )
-//        }
-//
-//        Text(
-//            text = "Attach your photo",
-//            color = Color.LightGray,
-//            modifier = Modifier.padding(bottom = 12.dp)
-//        )
 
         OutlinedTextField(
             value = jobpositionname,
@@ -151,7 +127,7 @@ fun AddjobScreen(navController: NavController) {
         ) {
             Button(
                 onClick = {
-                    navController.navigate(ROUTE_ADD_JOB)
+                    navController.navigate(ROUTE_DASHBOARD)
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray)
             ) {
@@ -160,22 +136,21 @@ fun AddjobScreen(navController: NavController) {
 
             Button(
                 onClick = {
-                    imageUri.value?.let {
-                        jobViewModel.uploadProductWithImage(
-                            it,
-                            context,
-                            jobpositionname,
-                            joblocation,
-                            jobclosingdateforapplication,
-                            jobflexibility,
-                            navController
-                        )
-                    } ?: Toast.makeText(context, "Please select an image", Toast.LENGTH_SHORT).show()
+                    jobViewModel.saveJob(
+                        jobpositionname,
+                        joblocation,
+                        jobclosingdateforapplication,
+                        jobflexibility,
+                        navController
+                    )
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Cyan)
             ) {
                 Text(text = "Save", color = Color.Black)
             }
+
         }
     }
 }
+
+

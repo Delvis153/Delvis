@@ -18,11 +18,12 @@ import androidx.compose.ui.unit.sp
 import com.example.delvis.data.SubscriptionViewModel
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
-
+import androidx.navigation.NavController
 
 
 @Composable
-fun SubscriptionScreen(viewModel: SubscriptionViewModel = viewModel()) {
+fun SubscriptionScreen(navController: NavController) {
+    val viewModel: SubscriptionViewModel = viewModel()
     val subscription by viewModel.subscription.collectAsState()
     val isSubscribed by viewModel.isSubscribed.collectAsState()
     val isPaying by viewModel.paymentInProgress.collectAsState()

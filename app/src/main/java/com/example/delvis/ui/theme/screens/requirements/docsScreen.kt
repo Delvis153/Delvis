@@ -1,6 +1,5 @@
 package com.example.delvis.ui.theme.screens.requirements
 
-import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,11 +22,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.foundation.border
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.Create
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,12 +34,13 @@ import com.example.delvis.navigation.ROUTE_LOGIN
 import com.example.delvis.navigation.ROUTE_RESUME
 import com.example.delvis.navigation.ROUTE_VIEW_APPLICATION
 import com.example.delvis.navigation.ROUTE_VIEW_JOBS
-import com.example.delvis.ui.theme.screens.dashboard.shareApp
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.filled.AllInbox
 import androidx.compose.material.icons.filled.Article
 import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Work
+import com.example.delvis.navigation.ROUTE_RESUME_CREATION
+import com.example.delvis.navigation.ROUTE_RESUME_PREVIEW
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -73,24 +69,18 @@ fun ResumeScreen(navController: NavHostController) {
                         selectedItem.value = 1
                         navController.navigate(ROUTE_RESUME)
                     },
-                    icon = { Icon(Icons.Filled.Article, contentDescription = "Resume") },
-                    label = { Text("Resume") },
+                    icon = { Icon(Icons.Filled.AllInbox, contentDescription = "Docs") },
+                    label = { Text("Docs") },
                     alwaysShowLabel = true
                 )
                 NavigationBarItem(
                     selected = selectedItem.value == 2,
                     onClick = {
                         selectedItem.value = 2
-                        val sendIntent = Intent().apply {
-                            action = Intent.ACTION_SEND
-                            putExtra(Intent.EXTRA_TEXT, "Download app here: https://www.download.com")
-                            type = "text/plain"
-                        }
-                        val shareIntent = Intent.createChooser(sendIntent, null)
-                        context.startActivity(shareIntent)
+                        navController.navigate(ROUTE_RESUME_PREVIEW)
                     },
-                    icon = { Icon(Icons.Filled.Send, contentDescription = "Share") },
-                    label = { Text("Share") },
+                    icon = { Icon(Icons.Filled.Article, contentDescription = "Resume") },
+                    label = { Text("Resume") },
                     alwaysShowLabel = true
                 )
                 NavigationBarItem(
@@ -144,9 +134,9 @@ fun ResumeScreen(navController: NavHostController) {
                     }
                 },
                 actions = {
-                  IconButton(onClick = { /* TODO: Implement search */ }) {
-                       Icon(Icons.Filled.Search, contentDescription = "Search", tint = Color.Black)
-                    }
+//                  IconButton(onClick = { /* TODO: Implement search */ }) {
+//                       Icon(Icons.Filled.Search, contentDescription = "Search", tint = Color.Black)
+//                    }
                     IconButton(onClick = { navController.navigate(ROUTE_LOGIN) }) {
                         Icon(Icons.Filled.AccountCircle, contentDescription = "Logout", tint = Color.Black)
                     }
@@ -167,23 +157,23 @@ fun ResumeScreen(navController: NavHostController) {
                 item {
                     SectionCard(
                         title = "Resumes",
-                        onCreateClick = { navController.navigate("create_resume") },
-                        onArrowClick = { navController.navigate("resumes_list") }
+                        onCreateClick = { navController.navigate(ROUTE_RESUME_CREATION) },
+                        onArrowClick = { navController.navigate(ROUTE_RESUME_CREATION) }
                     )
                 }
-                item {
-                    SectionCard(
-                        title = "Cover Letters",
-                        onCreateClick = { navController.navigate("create_cover_letter") },
-                        onArrowClick = { navController.navigate("cover_letters_list") }
-                    )
-                }
+//                item {
+//                    SectionCard(
+//                        title = "Cover Letters",
+//                        onCreateClick = { navController.navigate("create_cover_letter") },
+//                        onArrowClick = { navController.navigate("cover_letters_list") }
+//                    )
+//                }
             }
 
             // Floating Action Button
             Box(modifier = Modifier.fillMaxSize()) {
                 FloatingActionButton(
-                    onClick = { navController.navigate("create_document") },
+                    onClick = { navController.navigate(ROUTE_RESUME_CREATION) },
                     containerColor = Color(0xFF6200EE),
                     contentColor = Color.White,
                     shape = CircleShape,

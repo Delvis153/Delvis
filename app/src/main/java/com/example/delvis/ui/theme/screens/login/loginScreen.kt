@@ -58,9 +58,6 @@ fun LoginScreen(navController: NavHostController) {
     var password by remember { mutableStateOf(value = "") }
     val context = LocalContext.current 
 
-//    var googleCardHovered by remember { mutableStateOf(false) }
-    var icloudCardHovered by remember { mutableStateOf(false) }
-
     Column(
         modifier = Modifier
             .fillMaxHeight()
@@ -79,66 +76,6 @@ fun LoginScreen(navController: NavHostController) {
             textAlign = TextAlign.Left,
             modifier = Modifier.padding(bottom = 8.dp)  // Adjusted padding
         )
-
-        // Google and iCloud login options (Row with Cards)
-//        Row(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(bottom = 20.dp), // Padding for space between Row and next components
-//            horizontalArrangement = Arrangement.Center
-//        ) {
-//            // Google Card
-//            Card(
-//                modifier = Modifier
-//                    .padding(10.dp)
-//                    .wrapContentSize(),
-//                shape = RoundedCornerShape(20.dp),
-//                elevation = CardDefaults.cardElevation(10.dp),
-//                colors = CardDefaults.cardColors(Color.DarkGray),
-//            ) {
-//                Box(
-//                    modifier = Modifier
-//                        .height(100.dp)
-//                        .padding(25.dp),
-//                    contentAlignment = Alignment.Center,
-//
-//                ) {
-//                    Text(text = "Google", color = Color.White)  // Text in the center of the Card
-//                }
-//            }
-//
-//            // iCloud Card
-//            Card(
-//                modifier = Modifier
-//                    .padding(10.dp)
-//                    .wrapContentSize(),
-//                shape = RoundedCornerShape(20.dp),
-//                elevation = CardDefaults.cardElevation(10.dp),
-//                colors = CardDefaults.cardColors(
-//                    if (icloudCardHovered) Color.Magenta else Color.DarkGray),
-//
-//
-//                ) {
-//                Box(
-//                    modifier = Modifier
-//                        .height(100.dp)
-//                        .padding(25.dp),
-//                    contentAlignment = Alignment.Center
-//                ) {
-//                    Text(text = "Icloud", color = Color.White)  // Text in the center of the Card
-//                }
-//            }
-//        }
-//
-//        Text(
-//            text = "Login with one of the following options.",
-//            fontSize = 15.sp,
-//            color = Color.White,
-//            fontFamily = FontFamily.SansSerif,
-//            fontStyle = FontStyle.Normal,
-//            textAlign = TextAlign.Left,
-//            modifier = Modifier.padding(bottom = 16.dp)// Adjusted padding
-//        )
 
         Spacer(modifier = Modifier.height(20.dp))
 

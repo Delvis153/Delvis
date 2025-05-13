@@ -1,22 +1,31 @@
-package com.example.delvis.ui.theme.screens.dashboard
+package com.example.delvis.ui.theme.screens.requirements
 
-import android.content.Intent
+
+// Jetpack Compose
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.delvis.data.ResumePreviewViewModel
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,38 +38,29 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.delvis.R
-import com.example.delvis.navigation.ROUTE_ADD_JOB
 import com.example.delvis.navigation.ROUTE_DASHBOARD
 import com.example.delvis.navigation.ROUTE_LOGIN
 import com.example.delvis.navigation.ROUTE_RESUME
 import com.example.delvis.navigation.ROUTE_VIEW_APPLICATION
 import com.example.delvis.navigation.ROUTE_VIEW_JOBS
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.text.font.FontWeight
-import android.content.Context
-import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.filled.AllInbox
 import androidx.compose.material.icons.filled.Article
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Work
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
 import com.example.delvis.navigation.ROUTE_RESUME_PREVIEW
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DashboardScreen(navController: NavController) {
-    val selectedItem = remember { mutableStateOf(0) }
-    val context = LocalContext.current
+fun ResumePreviewScreen(navController: NavController) {
+    val viewModel: ResumePreviewViewModel = viewModel()
+    val resume = viewModel.resume.value // Access the resume data
+    val selectedItem = remember { mutableStateOf(2) }
 
     Scaffold(
         containerColor = Color.White,
@@ -91,7 +91,7 @@ fun DashboardScreen(navController: NavController) {
                     onClick = {
                         selectedItem.value = 2
                         navController.navigate(ROUTE_RESUME_PREVIEW)
-                              },
+                    },
                     icon = { Icon(Icons.Filled.Article, contentDescription = "Resume") },
                     label = { Text("Resume") },
                     alwaysShowLabel = true
@@ -159,59 +159,135 @@ fun DashboardScreen(navController: NavController) {
                     containerColor = Color.White,
                     titleContentColor = Color.Black
                 )
-
+            )
+            Text(
+                text = "FORMAT FOR YOUR RESUME",
+                fontSize = 20.sp,
+                fontFamily = FontFamily.SansSerif,
+                color = Color.Black
             )
 
+            Spacer(modifier = Modifier.height(20.dp))
 
-            Spacer(modifier = Modifier.height(24.dp))
+            // Display resume details here
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                // Header: Name, Title, Contact Info
+                ResumeHeader(
+                    name = resume.name,
+                    title = resume.title,
+                    email = resume.email,
+                    phone = resume.phone,
+                    linkedIn = resume.linkedIn
+                )
 
-            // Card Buttons
-            CardItem(label = "Add a Job") {
-                navController.navigate(ROUTE_ADD_JOB)
+                Divider()
+
+                // Professional Summary
+                ResumeSection(title = "Summary") {
+                    Text(resume.summary)
+                }
+
+                Divider()
+
+                // Education Section
+                if (resume.education.isNotEmpty()) {
+                    ResumeSection(title = "Education") {
+                        resume.education.forEach { education ->
+                            ResumeEducation(
+                                institution = education.institution,
+                                degree = education.degree,
+                                year = education.graduationYear
+                            )
+                        }
+                    }
+                }
+
+                Divider()
+
+                // Experience Section
+                if (resume.experience.isNotEmpty()) {
+                    ResumeSection(title = "Experience") {
+                        resume.experience.forEach { job ->
+                            ResumeJob(
+                                company = job.company,
+                                role = job.role,
+                                period = job.period,
+                                description = job.description
+                            )
+                            Spacer(Modifier.height(8.dp))
+                        }
+                    }
+                }
+
+                Divider()
+
+                // Skills Section
+                if (resume.skills.isNotEmpty()) {
+                    ResumeSection(title = "Skills") {
+                        Text(resume.skills.joinToString(", "))
+                    }
+                }
             }
         }
     }
 }
 
+// Header Composable for Name, Title, Email, etc.
 @Composable
-fun CardItem(label: String, onClick: () -> Unit) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(120.dp)
-            .clickable { onClick() },
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(6.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF6200EE))
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Text(
-                text = label,
-                color = Color.White,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold
-            )
-        }
+fun ResumeHeader(
+    name: String,
+    title: String,
+    email: String,
+    phone: String,
+    linkedIn: String
+) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+        Text(name, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+        Text(title, style = MaterialTheme.typography.bodyMedium, color = Color.Gray)
+        Spacer(Modifier.height(8.dp))
+        Text(email, fontSize = 14.sp)
+        Text(phone, fontSize = 14.sp)
+        Text(linkedIn, fontSize = 14.sp)
     }
 }
 
-fun shareApp(context: Context) {
-    val sendIntent = Intent().apply {
-        action = Intent.ACTION_SEND
-        putExtra(Intent.EXTRA_TEXT, "Download app here: https://www.download.com")
-        type = "text/plain"
+// Section composable for each major section (Education, Experience, Skills, etc.)
+@Composable
+fun ResumeSection(title: String, content: @Composable () -> Unit) {
+    Column {
+        Text(title, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
+        Spacer(Modifier.height(4.dp))
+        content()
     }
-    val shareIntent = Intent.createChooser(sendIntent, null)
-    context.startActivity(shareIntent)
+}
+
+// Education Item Composable
+@Composable
+fun ResumeEducation(institution: String, degree: String, year: String) {
+    Column {
+        Text("$degree at $institution", fontWeight = FontWeight.Bold)
+        Text("Graduation Year: $year", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+    }
+}
+
+// Job Item Composable (Experience)
+@Composable
+fun ResumeJob(company: String, role: String, period: String, description: String) {
+    Column {
+        Text("$role at $company", fontWeight = FontWeight.Bold)
+        Text(period, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+        Text(description)
+    }
 }
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun DashboardScreenPreview() {
-    DashboardScreen(rememberNavController())
+fun ResumePreviewViewScreen() {
+    ResumePreviewScreen(rememberNavController())
 }
-
-
